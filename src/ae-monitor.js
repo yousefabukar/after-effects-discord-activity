@@ -15,9 +15,6 @@ function parseTitle(title) {
   const versionMatch = title.match(/After Effects\s+(?:CC\s+)?(\d{4})/i);
   const version = versionMatch ? versionMatch[1] : null;
 
-  // "Adobe After Effects 2024 - ProjectName.aep *"
-  // "Adobe After Effects 2024 - ProjectName.aep (Rendering XX%)"
-  // "Adobe After Effects 2024"
   const projectMatch = title.match(/After Effects[^-]*-\s*(.+?)(?:\.aep)?\s*(\*)?\s*(?:\(([^)]+)\))?\s*$/i);
 
   if (!projectMatch) {

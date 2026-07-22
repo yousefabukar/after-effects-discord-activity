@@ -36,7 +36,6 @@ async function connect() {
 async function setActivity(aeInfo) {
   if (!connected || !client) return;
 
-  // Reset timer when switching projects
   if (aeInfo.projectName !== lastProjectName) {
     startTimestamp = Date.now();
     lastProjectName = aeInfo.projectName;
@@ -72,9 +71,7 @@ async function clearActivity() {
     await client.clearActivity();
     startTimestamp = null;
     lastProjectName = null;
-  } catch {
-    // swallow — Discord may have closed
-  }
+  } catch {}
 }
 
 function isConnected() {
