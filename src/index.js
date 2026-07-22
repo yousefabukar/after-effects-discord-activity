@@ -1,15 +1,7 @@
-const { getAEInfo, isAERunning } = require('./ae-monitor');
+const { getAEInfo } = require('./ae-monitor');
 const rpc = require('./rpc-manager');
 
-let cfg;
-try {
-  cfg = require('../config.json');
-} catch {
-  console.error('[Error] config.json not found. Copy config.example.json to config.json and fill in your Discord Application ID.');
-  process.exit(1);
-}
-
-const POLL_INTERVAL = cfg.pollInterval || 10000;
+const POLL_INTERVAL = 10000;
 let aeWasRunning = false;
 
 async function tick() {

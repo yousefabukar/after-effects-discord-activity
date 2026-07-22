@@ -1,6 +1,0 @@
-{
-  "clientId": "YOUR_DISCORD_APPLICATION_ID",
-  "pollInterval": 10000,
-  "largeImageKey": "ae_logo",
-  "largeImageText": "Adobe After Effects"
-}

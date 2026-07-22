@@ -1,5 +1,6 @@
 const RPC = require('discord-rpc');
-const cfg = require('../config.json');
+
+const CLIENT_ID = '1529327780796301515';
 
 let client = null;
 let connected = false;
@@ -24,7 +25,7 @@ async function connect() {
       client = null;
     });
 
-    client.login({ clientId: cfg.clientId }).catch((err) => {
+    client.login({ clientId: CLIENT_ID }).catch((err) => {
       console.error('[RPC] Login failed:', err.message);
       connected = false;
       client = null;
@@ -54,8 +55,8 @@ async function setActivity(aeInfo) {
       details,
       state,
       startTimestamp,
-      largeImageKey: cfg.largeImageKey || 'ae_logo',
-      largeImageText: cfg.largeImageText || 'Adobe After Effects',
+      largeImageKey: 'ae_logo',
+      largeImageText: 'Adobe After Effects',
       instance: false,
     });
   } catch (err) {
