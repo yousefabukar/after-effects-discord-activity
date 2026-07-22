@@ -6,7 +6,13 @@ Discord Rich Presence for Adobe After Effects. Shows your current project, versi
 
 ```
 npm install
-node src/index.js
+install.bat
 ```
 
-Keep it running in the background while you work. Requires Discord to be open.
+`install.bat` detects your AE installation and drops a startup script into it — After Effects will launch the presence automatically every time it opens. Requires admin prompt (to write into Program Files).
+
+To run manually instead:
+
+```
+node src/index.js
+```
