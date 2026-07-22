@@ -1,39 +1,39 @@
 const { execSync } = require('child_process');
+const path = require('path');
 
-const AE_PROCESS_NAMES = ['AfterFX', 'AfterFX64'];
+const PS_SCRIPT = path.join(__dirname, '..', 'detect-ae.ps1');
 
-function queryPS(command) {
+function getTitle() {
   return execSync(
-    `powershell -NonInteractive -NoProfile -Command "${command}"`,
-    { encoding: 'utf8', timeout: 5000, windowsHide: true }
+    `powershell -NonInteractive -NoProfile -ExecutionPolicy Bypass -File "${PS_SCRIPT}"`,
+    { encoding: 'utf8', timeout: 8000, windowsHide: true }
   ).trim();
 }
 
 function parseTitle(title) {
-  if (!title) return null;
-
   const versionMatch = title.match(/After Effects\s+(?:CC\s+)?(\d{4})/i);
   const version = versionMatch ? versionMatch[1] : null;
 
-  const projectMatch = title.match(/After Effects[^-]*-\s*(.+?)(?:\.aep)?\s*(\*)?\s*(?:\(([^)]+)\))?\s*$/i);
+  const dashIdx = title.indexOf(' - ');
+  if (dashIdx === -1) return { version, projectName: null, unsaved: false, renderInfo: null };
 
-  if (!projectMatch) {
-    return { version, projectName: null, unsaved: false, renderInfo: null };
-  }
+  let rest = title.slice(dashIdx + 3).trim();
 
-  return {
-    version,
-    projectName: projectMatch[1].trim(),
-    unsaved: projectMatch[2] === '*',
-    renderInfo: projectMatch[3] || null,
-  };
+  const renderMatch = rest.match(/\(([^)]+)\)\s*$/);
+  const renderInfo = renderMatch ? renderMatch[1] : null;
+  if (renderInfo) rest = rest.slice(0, renderMatch.index).trim();
+
+  const unsaved = rest.endsWith(' *') || rest.endsWith('*');
+  if (unsaved) rest = rest.slice(0, -1).trim().replace(/\s+$/, '');
+
+  const projectName = path.basename(rest, '.aep').trim();
+
+  return { version, projectName, unsaved, renderInfo };
 }
 
 function getAEInfo() {
   try {
-    const names = AE_PROCESS_NAMES.map(n => `'${n}'`).join(',');
-    const ps = `Get-Process -Name ${names} -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -ne '' } | Select-Object -First 1 -ExpandProperty MainWindowTitle`;
-    const title = queryPS(ps);
+    const title = getTitle();
     if (!title) return null;
     return { title, ...parseTitle(title) };
   } catch {
@@ -41,15 +41,4 @@ function getAEInfo() {
   }
 }
 
-function isAERunning() {
-  try {
-    const names = AE_PROCESS_NAMES.map(n => `'${n}'`).join(',');
-    const ps = `(Get-Process -Name ${names} -ErrorAction SilentlyContinue | Measure-Object).Count`;
-    const count = parseInt(queryPS(ps), 10);
-    return count > 0;
-  } catch {
-    return false;
-  }
-}
-
-module.exports = { getAEInfo, isAERunning };
+module.exports = { getAEInfo };
