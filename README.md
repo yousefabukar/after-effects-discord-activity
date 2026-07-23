@@ -1,4 +1,4 @@
-# after-effects-discord-activity
+# After Effects Discord Extension
 
 Discord Rich Presence for Adobe After Effects. Shows your current project, version, and elapsed time in your Discord status.
 
